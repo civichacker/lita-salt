@@ -6,23 +6,27 @@ describe Lita::Handlers::Salt, lita_handler: true do
   let(:reply) {""}
   let(:vals) { {url: "https://example.com", username: "timmy", password: "12345"} }
   let(:token) {"122938u98j9r82u3r"}
+  let(:salt) { described_class.new }
 
   describe "config" do
     before do
-      allow(described_class).to receive(:default_config).and_return(vals)
+      Lita.config.handlers.salt.url = vals[:url]
+      Lita.config.handlers.salt.username = vals[:username]
+      Lita.config.handlers.salt.password = vals[:password]
+      described_class.any_instance.stub(:default_config).and_return(vals)
     end
 
     it "should wrap url config vars" do
-      expect(described_class).to respond_to(:url)
-      expect(describe_class.url).to eql(vals[:url])
+      expect(salt).to respond_to(:url)
+      expect(salt.url).to eql(vals[:url])
     end
     it "should wrap username config vars" do
-      expect(described_class).to respond_to(:username)
-      expect(describe_class.url).to eql(vals[:username])
+      expect(salt).to respond_to(:username)
+      expect(salt.username).to eql(vals[:username])
     end
     it "should wrap password config vars" do
-      expect(described_class).to respond_to(:password)
-      expect(describe_class.url).to eql(vals[:password])
+      expect(salt).to respond_to(:password)
+      expect(salt.password).to eql(vals[:password])
     end
 
   end
@@ -49,7 +53,7 @@ describe Lita::Handlers::Salt, lita_handler: true do
   describe "#manage_up" do
     before do
       stub_request(:post, "#{vals[:url]}/login").
-        with(body: {eauth: :pam, password: vals[:password], username: vals[:username]},).
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
         to_return(status: 200,
                   body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
                   headers: {'X-Auth-Token' => token}
@@ -74,7 +78,7 @@ describe Lita::Handlers::Salt, lita_handler: true do
   describe "#manage_down" do
     before do
       stub_request(:post, "#{vals[:url]}/login").
-        with(body: {eauth: :pam, password: vals[:password], username: vals[:username]},).
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
         to_return(status: 200,
                   body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
                   headers: {'X-Auth-Token' => token}

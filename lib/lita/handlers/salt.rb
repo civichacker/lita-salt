@@ -97,6 +97,17 @@ module Lita
         resp
       end
 
+      def url
+        config.url
+      end
+
+      def username
+        config.username
+      end
+
+      def password
+        config.password
+      end
     end
 
     Lita.register_handler(Salt)
