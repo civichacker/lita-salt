@@ -4,6 +4,10 @@ require 'time'
 module Lita
   module Handlers
     class Salt < Handler
+      config :url, required: true
+      config :username, required: true
+      config :password, required: true
+
       class << self
         attr_accessor :token, :expires
       end
