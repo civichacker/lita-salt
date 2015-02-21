@@ -1,4 +1,4 @@
-# lita-salt
+# lita-salt (beta)
 
 **lita-salt** is an adapter for Lita that gives your bot the power to interact with your saltstack installation via salt-api.
 
