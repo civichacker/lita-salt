@@ -12,7 +12,21 @@ gem "lita-salt"
 
 ## Configuration
 
-TODO: Describe any configuration attributes the plugin exposes.
+### Required attributes
+
+* `url` (String) – The location of the running salt-api service.
+* `username` (String) – The username used to authenticate with salt-api.
+* `password` (String) – The password used to authenticate with salt-api.
+
+### Example
+
+``` ruby
+Lita.configure do |config|
+    config.handlers.salt.url = "https://api.example.com"
+    config.handlers.salt.username = ENV["SALT_USERNAME"]
+    config.handlers.salt.password = ENV["SALT_PASSWORD"]
+end
+```
 
 ## Usage
 
