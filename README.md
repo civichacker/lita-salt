@@ -30,7 +30,11 @@ end
 
 ## Usage
 
-TODO: Describe the plugin's features and how to use them.
+Commands are called in the with the `salt` prefix what can be optionally with the `s` abbreviation.
+
+### Example
+
+`lita: salt up` executes the `manage.up` runner and returns a list of up minions.
 
 ## License
 
