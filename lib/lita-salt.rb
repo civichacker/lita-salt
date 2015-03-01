@@ -5,6 +5,7 @@ Lita.load_locales Dir[File.expand_path(
 )]
 
 require "lita/handlers/salt"
+require "lita/utils/payload"
 
 Lita::Handlers::Salt.template_root File.expand_path(
   File.join("..", "..", "templates"),

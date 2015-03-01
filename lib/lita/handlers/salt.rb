@@ -93,7 +93,7 @@ module Lita
         if expired
           authenticate
         end
-        body = Payload.build_runner('manage.down')
+        body = build_runner('manage.down')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -106,17 +106,12 @@ module Lita
         if expired
           authenticate
         end
-        payload = {
-          client: :local,
-          tgt: '',
-          fun: '',
-          args: []
-        }
-        case msg.match[0].to_s
+        body = case msg.match[0].to_s
         when /get/
+          build_local('pillar.get',msg.match)
         when /show/
+          build_local('pillar.show',msg.match)
         end
-        body = Payload.build_local('pillar.get',msg.match)
         response = make_request('/', body)
 
         msg.reply_privately "yep"
