@@ -1,12 +1,18 @@
 require 'json'
 require 'time'
+require 'lita/utils/payload'
 
 module Lita
   module Handlers
     class Salt < Handler
+      include Utils::Payload
+
       config :url, required: true
       config :username, required: true
       config :password, required: true
+
+
+
 
       class << self
         attr_accessor :token, :expires, :command_prefix
@@ -80,7 +86,7 @@ module Lita
         if expired
           authenticate
         end
-        body = Payload.build_runner('manage.up')
+        body = build_runner('manage.up')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
