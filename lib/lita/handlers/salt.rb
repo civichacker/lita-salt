@@ -9,27 +9,41 @@ module Lita
       config :password, required: true
 
       class << self
-        attr_accessor :token, :expires
+        attr_accessor :token, :expires, :command_prefix
       end
 
       def self.default_config(config)
         self.token = nil
         self.expires = nil
+        self.command_prefix = "^s(?:alt)?"
+      end
+
+      def self.abbreviate(term)
+        "#{term[0]}(?:#{term[1,term.length]})?"
       end
 
 
       #on :connected, :greet
 
-      route /^s(?:alt)? up$/i, :manage_up, command: true, help: {
+      route /^#{abbreviate("salt")} up$/i, :manage_up, command: true, help: {
          'salt up' => 'lists alive minions'
       }
 
-      route /^s(?:alt)? down$/i, :manage_down, command: true, help: {
+      route /^#{abbreviate("salt")} down$/i, :manage_down, command: true, help: {
          'salt down' => 'lists dead minions'
       }
 
-      route /^s(?:alt)? login$/i, :login, command: true, help: {
+      route /^#{abbreviate("salt")} login$/i, :login, command: true, help: {
          'salt login' => 'renew auth token'
+      }
+
+      route /^#{abbreviate("salt")} pillar(?: #{abbreviate("help")})$/i, :pillar, command: true, help: {
+        'salt pillar get "some_key"' => 'get a pillar value'
+      }
+
+      route /^#{abbreviate("salt")} pillar (get|show)$/i, :pillar, command: true, help: {
+        'salt pillar get "some_key"' => 'get a pillar value',
+        'salt pillar show "some_minion"' => 'show pillar for given minion'
       }
 
       def authenticate
@@ -66,7 +80,7 @@ module Lita
         if expired
           authenticate
         end
-        body = JSON.dump({client: :runner, fun: 'manage.up'})
+        body = Payload.build_runner('manage.up')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -79,13 +93,33 @@ module Lita
         if expired
           authenticate
         end
-        body = JSON.dump({client: :runner, fun: 'manage.down'})
+        body = Payload.build_runner('manage.down')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
         else
           msg.reply "Failed to run command: #{body}\nError: #{response.body}"
         end
+      end
+
+      def pillar(msg)
+        if expired
+          authenticate
+        end
+        payload = {
+          client: :local,
+          tgt: '',
+          fun: '',
+          args: []
+        }
+        case msg.match[0].to_s
+        when /get/
+        when /show/
+        end
+        body = Payload.build_local('pillar.get',msg.match)
+        response = make_request('/', body)
+
+        msg.reply_privately "yep"
       end
 
       def expired
@@ -112,6 +146,11 @@ module Lita
       def password
         config.password
       end
+
+      #private
+      #def abbreviate(term)
+      #  "#{term[0]}(?:#{term[1,term.length]})?"
+      #end
     end
 
     Lita.register_handler(Salt)
