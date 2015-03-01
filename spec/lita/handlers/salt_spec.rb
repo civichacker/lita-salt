@@ -100,4 +100,28 @@ describe Lita::Handlers::Salt, lita_handler: true do
     end
   end
 
+  describe "#pillar_get" do
+    before do
+      stub_request(:post, "#{vals[:url]}/login").
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
+        to_return(status: 200,
+                  body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
+                  headers: {'X-Auth-Token' => token}
+        )
+      stub_request(:post, vals[:url]).
+        to_return(status: 200,
+                  body: JSON.dump(return: [[:main, :silly]])
+        )
+    end
+
+    #it { is_expected.to route_command('salt pillar').to(:pillar) }
+    it { is_expected.to route_command('salt pillar help').to(:pillar) }
+    it { is_expected.to route_command('salt pillar h').to(:pillar) }
+    it { is_expected.to route_command('s pillar help').to(:pillar) }
+    it { is_expected.to route_command('s pillar h').to(:pillar) }
+    it "should " do
+    end
+    
+  end
+
 end
