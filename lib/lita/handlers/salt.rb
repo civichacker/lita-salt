@@ -18,8 +18,6 @@ module Lita
       end
 
 
-      #on :connected, :greet
-
       route /^s(?:alt)? up$/i, :manage_up, command: true, help: {
          'salt up' => 'lists alive minions'
       }
