@@ -12,7 +12,7 @@ module Lita
         attr_accessor :token, :expires
       end
 
-      def self.default_config(config)
+      def self.config(config)
         self.token = nil
         self.expires = nil
       end
