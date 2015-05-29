@@ -100,4 +100,61 @@ describe Lita::Handlers::Salt, lita_handler: true do
     end
   end
 
+  describe "#service" do
+    before do
+      stub_request(:post, "#{vals[:url]}/login").
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
+        to_return(status: 200,
+                  body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
+                  headers: {'X-Auth-Token' => token}
+        )
+      stub_request(:post, vals[:url]).
+        to_return(status: 200,
+                  body: JSON.dump(return: [[:main, :silly]])
+        )
+    end
+
+    it { is_expected.to route_command('salt minion service.restart someservice').to(:service) }
+    it { is_expected.to route_command('s minion service.restart someservice').to(:service) }
+
+  end
+
+  describe "#schedule" do
+    before do
+      stub_request(:post, "#{vals[:url]}/login").
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
+        to_return(status: 200,
+                  body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
+                  headers: {'X-Auth-Token' => token}
+        )
+      stub_request(:post, vals[:url]).
+        to_return(status: 200,
+                  body: JSON.dump(return: [[:main, :silly]])
+        )
+    end
+
+    it { is_expected.to route_command('salt minion schedule.list').to(:schedule) }
+    it { is_expected.to route_command('s minion schedule.list').to(:schedule) }
+
+  end
+
+  describe "#supervisord" do
+    before do
+      stub_request(:post, "#{vals[:url]}/login").
+        with(body: {eauth: "pam", password: vals[:password], username: vals[:username]}).
+        to_return(status: 200,
+                  body: JSON.dump(return: [{token: token, expire: 1424352200.50011}]),
+                  headers: {'X-Auth-Token' => token}
+        )
+      stub_request(:post, vals[:url]).
+        to_return(status: 200,
+                  body: JSON.dump(return: [[:main, :silly]])
+        )
+    end
+
+    it { is_expected.to route_command('salt minion supervisord.list').to(:supervisord) }
+    it { is_expected.to route_command('s minion supervisord.list').to(:supervisord) }
+
+
+
 end

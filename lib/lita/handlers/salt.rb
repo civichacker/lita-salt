@@ -32,6 +32,18 @@ module Lita
          'salt login' => 'renew auth token'
       }
 
+      route /^s(?:alt)?\s(.+)\sservice\.(restart|start|stop)\s(.+)$/i, :service, command: true, help: {
+        'salt minion service.(restart|start|stop)' => 'Performs defined action on service'
+      }
+
+      route /^s(?:alt)?\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)\s(.+)$/i, :schedule, command: true, help: {
+        'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with schduling system'
+      }
+
+      route /^s(?:alt)?\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
+        'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
+      }
+
       def authenticate
         resp = http.post("#{config.url}/login") do |req|
           req.body = {}
@@ -85,6 +97,65 @@ module Lita
           msg.reply response.body
         else
           msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+        end
+      end
+
+      def service(msg)
+        if expired
+          authenticate
+        end
+        where = msg.matches.flatten.first
+        task = msg.matches.flatten[1]
+        what = msg.matches.flatten[2]
+        if what.nil?
+          msg.reply "Missing service name"
+        else
+          body = JSON.dump({client: :local, tgt: where, fun: "service.#{task}", arg: [what]})
+          response = make_request('/', body)
+          process_response(response)
+        end
+      end
+
+      def schedule(msg)
+        if expired
+          authenticate
+        end
+        where = msg.matches.flatten.first
+        task = msg.matches.flatten[1]
+        what = msg.matches.flatten[2]
+        if what.nil?
+          msg.reply "Missing job name"
+        else
+          body = JSON.dump({client: :local, tgt: where, fun: "schedule.#{task}", arg: [what]})
+          response = make_request('/', body)
+          process_response(response)
+        end
+      end
+
+      def supervisord(msg)
+        if expired
+          authenticate
+        end
+        where = msg.matches.flatten.first
+        task = msg.matches.flatten[1]
+        what = msg.matches.flatten[2]
+        if what.nil?
+          msg.reply "Missing job name"
+        else
+          body = JSON.dump({client: :local, tgt: where, fun: "supervisord.#{task}", arg: [what]})
+          response = make_request('/', body)
+          process_response(response)
+        end
+      end
+
+      def process_response(response)
+        case response.status
+          when 200
+            msg.reply response.body
+          when 400..405
+            msg.reply "You lack the permissions to perform this action"
+          else
+            msg.reply "Failed to run command: #{body}\nError: #{response.body}"
         end
       end
 
