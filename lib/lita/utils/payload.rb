@@ -10,13 +10,15 @@ module Utils
       })
     end
 
-    def build_local(function, matches)
-      JSON.dump({
+    def build_local(target, function, arg=nil)
+      s = {
         client: :local,
-        tgt: march[0],
+        tgt: target,
         fun: function,
-        args: [match[1]]
-      })
+      }
+      s['args'] = [arg] unless arg.nil?
+
+      JSON.dump(s)
     end
   end
 end
