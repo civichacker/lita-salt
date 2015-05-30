@@ -1,16 +1,19 @@
 require 'json'
 require 'time'
 require 'lita/utils/payload'
+require 'lita/utils/decorate'
+
+
 
 module Lita
   module Handlers
     class Salt < Handler
       include Utils::Payload
+      include Utils::Decorate
 
       config :url, required: true
       config :username, required: true
       config :password, required: true
-
 
 
 
@@ -154,6 +157,7 @@ module Lita
       #end
     end
 
+    check_auth :manage_up
     Lita.register_handler(Salt)
   end
 end
