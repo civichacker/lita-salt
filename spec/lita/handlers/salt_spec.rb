@@ -152,8 +152,8 @@ describe Lita::Handlers::Salt, lita_handler: true do
         )
     end
 
-    it { is_expected.to route_command('salt minion supervisord.list').to(:supervisord) }
-    it { is_expected.to route_command('s minion supervisord.list').to(:supervisord) }
+    it { is_expected.to route_command('salt minion supervisord.status nginx').to(:supervisord) }
+    it { is_expected.to route_command('s minion supervisord.status nginx').to(:supervisord) }
 
   end
 
@@ -176,8 +176,6 @@ describe Lita::Handlers::Salt, lita_handler: true do
     it { is_expected.to route_command('salt pillar h').to(:pillar) }
     it { is_expected.to route_command('s pillar help').to(:pillar) }
     it { is_expected.to route_command('s pillar h').to(:pillar) }
-    it "should " do
-    end
     
   end
 

@@ -49,12 +49,13 @@ module Lita
         'salt minion service.(restart|start|stop)' => 'Performs defined action on service'
       }
 
-      route /^s(?:alt)?\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)\s(.+)$/i, :schedule, command: true, help: {
+      route /^s(?:alt)?\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)(?:\s(.+))?$/i, :schedule, command: true, help: {
         'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with schduling system'
       }
 
       route /^s(?:alt)?\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
+      }
 
       route /^#{abbreviate("salt")} pillar(?: #{abbreviate("help")})$/i, :pillar, command: true, help: {
         'salt pillar get "some_key"' => 'get a pillar value'
@@ -178,16 +179,23 @@ module Lita
           else
             msg.reply "Failed to run command: #{body}\nError: #{response.body}"
         end
+      end
+
+      def prepare_request(where, task, what=nil)
+        
+        JSON.dump({client: :local, tgt: where, fun: "supervisord.#{task}", arg: [what]})
+
+      end
 
       def pillar(msg)
         if expired
           authenticate
         end
-        body = case msg.match[0].to_s
+        body = case msg.match[1].to_s
         when /get/
-          build_local('pillar.get',msg.match)
+          build_local(msg.match[0], msg.match[1], msg.match[2])
         when /show/
-          build_local('pillar.show',msg.match)
+          build_local(msg.match[0], msg.match[1])
         end
         response = make_request('/', body)
 
@@ -225,7 +233,8 @@ module Lita
       #end
     end
 
-    check_auth :manage_up
+
+    #check_auth :manage_up
     Lita.register_handler(Salt)
   end
 end
