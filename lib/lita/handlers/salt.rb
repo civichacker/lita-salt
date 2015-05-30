@@ -1,32 +1,47 @@
 require 'json'
 require 'time'
+require 'lita/utils/payload'
+require 'lita/utils/decorate'
+
+
 
 module Lita
   module Handlers
     class Salt < Handler
+      include Utils::Payload
+      include Utils::Decorate
+
       config :url, required: true
       config :username, required: true
       config :password, required: true
 
+
+
       class << self
-        attr_accessor :token, :expires
+        attr_accessor :token, :expires, :command_prefix
       end
 
       def self.config(config)
         self.token = nil
         self.expires = nil
+        self.command_prefix = "^s(?:alt)?"
+      end
+
+      def self.abbreviate(term)
+        "#{term[0]}(?:#{term[1,term.length]})?"
       end
 
 
-      route /^s(?:alt)? up$/i, :manage_up, command: true, help: {
+
+      route /^#{abbreviate("salt")} up$/i, :manage_up, command: true, help: {
          'salt up' => 'lists alive minions'
       }
 
-      route /^s(?:alt)? down$/i, :manage_down, command: true, help: {
+      route /^#{abbreviate("salt")} down$/i, :manage_down, command: true, help: {
          'salt down' => 'lists dead minions'
       }
 
-      route /^s(?:alt)? login$/i, :login, command: true, help: {
+      route /^#{abbreviate("salt")} login$/i, :login, command: true, help: {
          'salt login' => 'renew auth token'
       }
 
@@ -40,6 +55,14 @@ module Lita
 
       route /^s(?:alt)?\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
+
+      route /^#{abbreviate("salt")} pillar(?: #{abbreviate("help")})$/i, :pillar, command: true, help: {
+        'salt pillar get "some_key"' => 'get a pillar value'
+      }
+
+      route /^#{abbreviate("salt")} pillar (get|show)$/i, :pillar, command: true, help: {
+        'salt pillar get "some_key"' => 'get a pillar value',
+        'salt pillar show "some_minion"' => 'show pillar for given minion'
       }
 
       def authenticate
@@ -76,7 +99,7 @@ module Lita
         if expired
           authenticate
         end
-        body = JSON.dump({client: :runner, fun: 'manage.up'})
+        body = build_runner('manage.up')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -89,7 +112,7 @@ module Lita
         if expired
           authenticate
         end
-        body = JSON.dump({client: :runner, fun: 'manage.down'})
+        body = build_runner('manage.down')
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -155,6 +178,20 @@ module Lita
           else
             msg.reply "Failed to run command: #{body}\nError: #{response.body}"
         end
+
+      def pillar(msg)
+        if expired
+          authenticate
+        end
+        body = case msg.match[0].to_s
+        when /get/
+          build_local('pillar.get',msg.match)
+        when /show/
+          build_local('pillar.show',msg.match)
+        end
+        response = make_request('/', body)
+
+        msg.reply_privately "yep"
       end
 
       def expired
@@ -181,8 +218,14 @@ module Lita
       def password
         config.password
       end
+
+      #private
+      #def abbreviate(term)
+      #  "#{term[0]}(?:#{term[1,term.length]})?"
+      #end
     end
 
+    check_auth :manage_up
     Lita.register_handler(Salt)
   end
 end
