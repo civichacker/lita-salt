@@ -134,7 +134,7 @@ module Lita
         else
           body = JSON.dump({client: :local, tgt: where, fun: "service.#{task}", arg: [what]})
           response = make_request('/', body)
-          process_response(response)
+          msg.reply process_response(response)
         end
       end
 
@@ -150,7 +150,7 @@ module Lita
         else
           body = JSON.dump({client: :local, tgt: where, fun: "schedule.#{task}", arg: [what]})
           response = make_request('/', body)
-          process_response(response)
+          msg.reply process_response(response)
         end
       end
 
@@ -166,19 +166,21 @@ module Lita
         else
           body = JSON.dump({client: :local, tgt: where, fun: "supervisord.#{task}", arg: [what]})
           response = make_request('/', body)
-          process_response(response)
+          msg.reply process_response(response)
         end
       end
 
       def process_response(response)
+        out = nil
         case response.status
           when 200
-            msg.reply response.body
+            out = response.body
           when 400..405
-            msg.reply "You lack the permissions to perform this action"
+            out = "You lack the permissions to perform this action"
           else
-            msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+            out = "Failed to run command: #{body}\nError: #{response.body}"
         end
+        out
       end
 
       def prepare_request(where, task, what=nil)
@@ -191,11 +193,12 @@ module Lita
         if expired
           authenticate
         end
-        body = case msg.match[1].to_s
+        body = msg.matches[1].to_s
+        case body
         when /get/
-          build_local(msg.match[0], msg.match[1], msg.match[2])
+          build_local(msg.matches[0], msg.matches[1], msg.matches[2])
         when /show/
-          build_local(msg.match[0], msg.match[1])
+          build_local(msg.matches[0], msg.matches[1])
         end
         response = make_request('/', body)
 
