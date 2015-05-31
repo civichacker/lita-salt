@@ -45,15 +45,15 @@ module Lita
          'salt login' => 'renew auth token'
       }
 
-      route /^s(?:alt)?\s(.+)\sservice\.(restart|start|stop)\s(.+)$/i, :service, command: true, help: {
+      route /^#{abbreviate("salt")}\s(.+)\sservice\.(restart|start|stop)\s(.+)$/i, :service, command: true, help: {
         'salt minion service.(restart|start|stop)' => 'Performs defined action on service'
       }
 
-      route /^s(?:alt)?\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)(?:\s(.+))?$/i, :schedule, command: true, help: {
+      route /^#{abbreviate("salt")}\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)(?:\s(.+))?$/i, :schedule, command: true, help: {
         'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with schduling system'
       }
 
-      route /^s(?:alt)?\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
+      route /^#{abbreviate("salt")}\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
       }
 
