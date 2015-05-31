@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["jurnell@sophicware.com"]
   spec.description   = %q{Salt handler for lita 4+}
   spec.summary       = spec.description
-  spec.homepage      = "http://sophicware.com"
+  spec.homepage      = "https://github.com/sophicware/lita-salt"
   spec.license       = "MIT"
   spec.metadata      = { "lita_plugin_type" => "handler" }
 
