@@ -132,7 +132,7 @@ module Lita
         if what.nil?
           msg.reply "Missing service name"
         else
-          body = JSON.dump({client: :local, tgt: where, fun: "service.#{task}", arg: [what]})
+          body = build_local(where, "#{__callee__}.#{task}", what)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -148,7 +148,7 @@ module Lita
         if what.nil?
           msg.reply "Missing job name"
         else
-          body = JSON.dump({client: :local, tgt: where, fun: "schedule.#{task}", arg: [what]})
+          body = build_local(where, "#{__callee__}.#{task}", what)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -164,7 +164,7 @@ module Lita
         if what.nil?
           msg.reply "Missing job name"
         else
-          body = JSON.dump({client: :local, tgt: where, fun: "supervisord.#{task}", arg: [what]})
+          body = build_local(where, "#{__callee__}.#{task}", what)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -183,26 +183,20 @@ module Lita
         out
       end
 
-      def prepare_request(where, task, what=nil)
-        
-        JSON.dump({client: :local, tgt: where, fun: "supervisord.#{task}", arg: [what]})
-
-      end
-
       def pillar(msg)
         if expired
           authenticate
         end
-        body = msg.matches[1].to_s
-        case body
-        when /get/
-          build_local(msg.matches[0], msg.matches[1], msg.matches[2])
-        when /show/
-          build_local(msg.matches[0], msg.matches[1])
+        where = msg.matches.flatten.first
+        task = msg.matches.flatten[1]
+        what = msg.matches.flatten[2]
+        if what.nil?
+          msg.reply "Missing job name"
+        else
+          body = build_local(where, "#{__callee__}.#{task}", what)
+          response = make_request('/', body)
+          msg.reply_privately process_response(response)
         end
-        response = make_request('/', body)
-
-        msg.reply_privately "yep"
       end
 
       def expired
@@ -230,14 +224,8 @@ module Lita
         config.password
       end
 
-      #private
-      #def abbreviate(term)
-      #  "#{term[0]}(?:#{term[1,term.length]})?"
-      #end
     end
 
-
-    #check_auth :manage_up
     Lita.register_handler(Salt)
   end
 end

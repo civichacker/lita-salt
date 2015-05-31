@@ -16,8 +16,7 @@ module Utils
         tgt: target,
         fun: function,
       }
-      s['args'] = [arg] unless arg.nil?
-
+      s['arg'] = [arg] unless arg.nil?
       JSON.dump(s)
     end
   end
