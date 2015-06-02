@@ -1,10 +1,9 @@
 require "simplecov"
-require "coveralls"
 require 'webmock/rspec'
+require 'fakeredis/rspec'
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start { add_filter "/spec/" }
 
