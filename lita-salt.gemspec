@@ -20,8 +20,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rack-test"
   spec.add_development_dependency "rspec", ">= 3.0.0"
   spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "coveralls"
   spec.add_development_dependency "webmock"
   spec.add_development_dependency "guard-rake"
   spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "fakeredis"
 end
