@@ -14,6 +14,7 @@ module Lita
       config :url, required: true
       config :username, required: true
       config :password, required: true
+      config :returner, required: false
 
 
 
@@ -100,7 +101,7 @@ module Lita
         if expired
           authenticate
         end
-        body = build_runner('manage.up')
+        body = build_runner('manage.up', returner)
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -113,7 +114,7 @@ module Lita
         if expired
           authenticate
         end
-        body = build_runner('manage.down')
+        body = build_runner('manage.down', returner)
         response = make_request('/', body)
         if response.status == 200
           msg.reply response.body
@@ -132,7 +133,7 @@ module Lita
         if what.nil?
           msg.reply "Missing service name"
         else
-          body = build_local(where, "#{__callee__}.#{task}", what)
+          body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -148,7 +149,7 @@ module Lita
         if what.nil?
           msg.reply "Missing job name"
         else
-          body = build_local(where, "#{__callee__}.#{task}", what)
+          body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -164,7 +165,7 @@ module Lita
         if what.nil?
           msg.reply "Missing job name"
         else
-          body = build_local(where, "#{__callee__}.#{task}", what)
+          body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
           msg.reply process_response(response)
         end
@@ -193,7 +194,7 @@ module Lita
         if what.nil?
           msg.reply "Missing job name"
         else
-          body = build_local(where, "#{__callee__}.#{task}", what)
+          body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
           msg.reply_privately process_response(response)
         end
@@ -222,6 +223,10 @@ module Lita
 
       def password
         config.password
+      end
+
+      def returner
+        config.returner
       end
 
     end

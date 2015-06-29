@@ -12,11 +12,15 @@ gem "lita-salt"
 
 ## Configuration
 
-### Required attributes
+### Required
 
 * `url` (String) – The location of the running salt-api service.
 * `username` (String) – The username used to authenticate with salt-api.
 * `password` (String) – The password used to authenticate with salt-api.
+
+### Optional
+
+* `returner` (String) – A Saltstack returner you'd like to use. (uses default if unset)
 
 ### Example
 
