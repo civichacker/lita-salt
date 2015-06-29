@@ -3,7 +3,7 @@ require 'json'
 module Utils
   module Payload
 
-    def build_runner(function, returner)
+    def build_runner(function, returner=nil)
       s = {
         client: :runner,
         fun: function
