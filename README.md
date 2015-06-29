@@ -20,7 +20,7 @@ gem "lita-salt"
 
 ### Optional
 
-* `returner` (String) – A Saltstack returner you'd like to use. (uses default if unset)
+* `returner` (String) – A [Saltstack returner](http://docs.saltstack.com/en/2014.7/ref/returners/all/) you'd like to use. (uses default if unset)
 
 ### Example
 
