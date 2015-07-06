@@ -33,6 +33,9 @@ module Lita
       end
 
 
+      route /^#{abbreviate("salt")}\s(.+)\sevent\.(send|fire)\s(.+)$/i, :event, command: true, help: {
+        'salt minion event.(fire|send)' => 'Injects an event into the Salt even system'
+      }
 
       route /^#{abbreviate("salt")} up$/i, :manage_up, command: true, help: {
          'salt up' => 'lists alive minions'
@@ -96,6 +99,23 @@ module Lita
         headers['X-Auth-Token'] = self.class.token
         headers
       end
+
+      def event(msg)
+        if expired
+          authenticate
+        end
+        where = msg.matches.flatten.first
+        task = msg.matches.flatten[1]
+        what = msg.matches.flatten[2]
+        if what.nil?
+          msg.reply "Missing data"
+        else
+          body = build_local(where, "#{__callee__}.#{task}", what, returner)
+          response = make_request('/', body)
+          msg.reply process_response(response)
+        end
+      end
+
 
       def manage_up(msg)
         if expired
