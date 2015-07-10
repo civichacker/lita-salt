@@ -1,6 +1,6 @@
 # lita-salt [![Gem Version](https://badge.fury.io/rb/lita-salt.svg)](http://badge.fury.io/rb/lita-salt)
 
-**lita-salt** is an adapter for [Lita](https://www.lita.io) that gives your bot the power to interact with your saltstack installation via salt-api.
+**lita-salt** is an adapter for [Lita](https://www.lita.io) that allows your bot to interact with your saltstack installation via salt-api.
 
 ## Installation
 
