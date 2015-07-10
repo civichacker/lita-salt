@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-rake"
   spec.add_development_dependency "guard-rspec"
   spec.add_development_dependency "fakeredis"
+  spec.add_development_dependency "rubocop"
 end
