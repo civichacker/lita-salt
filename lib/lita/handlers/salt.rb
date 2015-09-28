@@ -61,15 +61,6 @@ module Lita
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
       }
 
-      route /^#{abbreviate("salt")} pillar(?: #{abbreviate("help")})$/i, :pillar, command: true, help: {
-        'salt pillar get "some_key"' => 'get a pillar value'
-      }
-
-      route /^#{abbreviate("salt")} pillar (get|show)$/i, :pillar, command: true, help: {
-        'salt pillar get "some_key"' => 'get a pillar value',
-        'salt pillar show "some_minion"' => 'show pillar for given minion'
-      }
-
       def authenticate
         resp = http.post("#{config.url}/login") do |req|
           req.body = {}
@@ -108,11 +99,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing data"
+          msg.reply(render_template("layout", response: "Missing data"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", response: process_response(response)))
         end
       end
 
@@ -126,7 +117,7 @@ module Lita
         if response.status == 200
           msg.reply response.body
         else
-          msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -139,7 +130,7 @@ module Lita
         if response.status == 200
           msg.reply response.body
         else
-          msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -151,11 +142,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing service name"
+          msg.reply(render_template("layout", response: "Missing service name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", response: process_response(response)))
         end
       end
 
@@ -167,11 +158,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing job name"
+          msg.reply(render_template("layout", response: "Missing job name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", response: process_response(response)))
         end
       end
 
@@ -183,11 +174,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing job name"
+          msg.reply(render_template("layout", response: "Missing job name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", response: process_response(response)))
         end
       end
 
@@ -202,22 +193,6 @@ module Lita
             out = "Failed to run command: #{body}\nError: #{response.body}"
         end
         out
-      end
-
-      def pillar(msg)
-        if expired
-          authenticate
-        end
-        where = msg.matches.flatten.first
-        task = msg.matches.flatten[1]
-        what = msg.matches.flatten[2]
-        if what.nil?
-          msg.reply "Missing job name"
-        else
-          body = build_local(where, "#{__callee__}.#{task}", what, returner)
-          response = make_request('/', body)
-          msg.reply_privately process_response(response)
-        end
       end
 
       def expired
