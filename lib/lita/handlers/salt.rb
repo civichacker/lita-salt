@@ -108,11 +108,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing data"
+          msg.reply(render_template("layout", "Missing data"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", process_response(response)))
         end
       end
 
@@ -126,7 +126,7 @@ module Lita
         if response.status == 200
           msg.reply response.body
         else
-          msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+          msg.reply(render_template("example", "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -139,7 +139,7 @@ module Lita
         if response.status == 200
           msg.reply response.body
         else
-          msg.reply "Failed to run command: #{body}\nError: #{response.body}"
+          msg.reply(render_template("example", "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -151,11 +151,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing service name"
+          msg.reply(render_template("layout", "Missing service name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", process_response(response)))
         end
       end
 
@@ -167,11 +167,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing job name"
+          msg.reply(render_template("layout", "Missing job name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", process_response(response)))
         end
       end
 
@@ -183,11 +183,11 @@ module Lita
         task = msg.matches.flatten[1]
         what = msg.matches.flatten[2]
         if what.nil?
-          msg.reply "Missing job name"
+          msg.reply(render_template("layout", "Missing job name"))
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
-          msg.reply process_response(response)
+          msg.reply(render_template("layout", process_response(response)))
         end
       end
 
@@ -216,6 +216,7 @@ module Lita
         else
           body = build_local(where, "#{__callee__}.#{task}", what, returner)
           response = make_request('/', body)
+          msg.reply_privately(render_template("layout", process_response(response)))
           msg.reply_privately process_response(response)
         end
       end
