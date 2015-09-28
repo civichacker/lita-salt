@@ -39,7 +39,6 @@ Commands are called in the with the `salt` prefix what can be optionally with th
 ```shell
 lita: salt minion service.restart nginx
 @lita s minion schedule.run_job apt
-lita: salt pillar get "some_key"
 ```
 
 ### Example
