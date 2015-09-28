@@ -2,11 +2,12 @@ require "spec_helper"
 
 describe Lita::Handlers::Salt, lita_handler: true do
 
+  let(:robot) { Lita::Robot.new(registry) }
   let(:response) {double("Faraday::Response")}
   let(:reply) {""}
   let(:vals) { {url: "https://example.com", username: "timmy", password: "12345"} }
   let(:token) {"122938u98j9r82u3r"}
-  let(:salt) { described_class.new }
+  let(:salt) { described_class.new(robot) }
 
   describe "config" do
     before do
