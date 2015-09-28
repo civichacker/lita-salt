@@ -61,15 +61,6 @@ module Lita
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
       }
 
-      route /^#{abbreviate("salt")} pillar(?: #{abbreviate("help")})$/i, :pillar, command: true, help: {
-        'salt pillar get "some_key"' => 'get a pillar value'
-      }
-
-      route /^#{abbreviate("salt")} pillar (get|show)$/i, :pillar, command: true, help: {
-        'salt pillar get "some_key"' => 'get a pillar value',
-        'salt pillar show "some_minion"' => 'show pillar for given minion'
-      }
-
       def authenticate
         resp = http.post("#{config.url}/login") do |req|
           req.body = {}
