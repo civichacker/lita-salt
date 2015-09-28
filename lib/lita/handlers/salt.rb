@@ -204,23 +204,6 @@ module Lita
         out
       end
 
-      def pillar(msg)
-        if expired
-          authenticate
-        end
-        where = msg.matches.flatten.first
-        task = msg.matches.flatten[1]
-        what = msg.matches.flatten[2]
-        if what.nil?
-          msg.reply "Missing job name"
-        else
-          body = build_local(where, "#{__callee__}.#{task}", what, returner)
-          response = make_request('/', body)
-          msg.reply_privately(render_template("layout", process_response(response)))
-          msg.reply_privately process_response(response)
-        end
-      end
-
       def expired
         self.class.token.nil? || Time.now >= Time.at(self.class.expires)
       end
