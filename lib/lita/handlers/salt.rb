@@ -116,7 +116,7 @@ module Lita
         body = build_runner('manage.up', returner)
         response = make_request('/', body)
         if response.status == 200
-          msg.reply response.body
+          msg.reply(process_response(response))
         else
           msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
@@ -129,7 +129,7 @@ module Lita
         body = build_runner('manage.down', returner)
         response = make_request('/', body)
         if response.status == 200
-          msg.reply response.body
+          msg.reply process_response(response)
         else
           msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
@@ -193,7 +193,7 @@ module Lita
           else
             out = "Failed to run command: #{body}\nError: #{response.body}"
         end
-        out
+        JSON.pretty_generate(JSON.parse(out))
       end
 
       def expired
