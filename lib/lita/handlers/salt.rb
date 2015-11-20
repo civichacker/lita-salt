@@ -2,6 +2,7 @@ require 'json'
 require 'time'
 require 'lita/utils/payload'
 require 'lita/utils/decorate'
+require 'lita-confirmation'
 
 
 
@@ -34,30 +35,30 @@ module Lita
 
 
       route /^#{abbreviate("salt")}\s(.+)\sevent\.(send|fire)\s(.+)$/i, :event, command: true, help: {
-        'salt minion event.(fire|send)' => 'Injects an event into the Salt even system'
+        'salt minion event.(fire|send)' => 'Injects an event into the Salt event system'
       }
 
-      route /^#{abbreviate("salt")} up$/i, :manage_up, command: true, help: {
+      route /^#{abbreviate("salt")} up$/i, :manage_up, command: false, help: {
          'salt up' => 'lists alive minions'
       }
 
-      route /^#{abbreviate("salt")} down$/i, :manage_down, command: true, help: {
+      route /^#{abbreviate("salt")} down$/i, :manage_down, command: false, help: {
          'salt down' => 'lists dead minions'
       }
 
-      route /^#{abbreviate("salt")} login$/i, :login, command: true, help: {
+      route /^#{abbreviate("salt")} login$/i, :login, command: false, confirmation: true, help: {
          'salt login' => 'renew auth token'
       }
 
-      route /^#{abbreviate("salt")}\s(.+)\sservice\.(restart|start|stop)\s(.+)$/i, :service, command: true, help: {
-        'salt minion service.(restart|start|stop)' => 'Performs defined action on service'
+      route /^#{abbreviate("salt")}\s(.+)\sservice\.(restart|start|stop|status)\s(.+)$/i, :service, command: false, help: {
+        'salt minion service.(restart|start|stop|status)' => 'Performs defined action on service'
       }
 
       route /^#{abbreviate("salt")}\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)(?:\s(.+))?$/i, :schedule, command: true, help: {
-        'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with schduling system'
+        'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with scheduling system'
       }
 
-      route /^#{abbreviate("salt")}\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: true, help: {
+      route /^#{abbreviate("salt")}\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: false, help: {
         'salt minion supervisord.(status|start|stop|restart|add|remove)' => 'Execute supervisor action'
       }
 
@@ -115,9 +116,9 @@ module Lita
         body = build_runner('manage.up', returner)
         response = make_request('/', body)
         if response.status == 200
-          msg.reply response.body
+          msg.reply(process_response(response))
         else
-          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
+          msg.reply(render_template("layout", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -128,9 +129,9 @@ module Lita
         body = build_runner('manage.down', returner)
         response = make_request('/', body)
         if response.status == 200
-          msg.reply response.body
+          msg.reply process_response(response)
         else
-          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
+          msg.reply(render_template("layout", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -192,7 +193,7 @@ module Lita
           else
             out = "Failed to run command: #{body}\nError: #{response.body}"
         end
-        out
+        JSON.pretty_generate(JSON.parse(out))
       end
 
       def expired

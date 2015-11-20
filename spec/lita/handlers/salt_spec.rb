@@ -72,7 +72,7 @@ describe Lita::Handlers::Salt, lita_handler: true do
       allow(response).to receive(:body).and_return(reply)
       allow(response).to receive(:headers).and_return(token)
       send_command('s up')
-      expect(replies.last).to eq(JSON.dump(return: [['main','silly']]))
+      expect(replies.last).to eq(JSON.pretty_generate(return: [['main','silly']]))
     end
   end
 
@@ -97,7 +97,7 @@ describe Lita::Handlers::Salt, lita_handler: true do
       allow(response).to receive(:body).and_return(reply)
       allow(response).to receive(:headers).and_return(token)
       send_command('s down')
-      expect(replies.last).to eq(JSON.dump(return: [['main','silly']]))
+      expect(replies.last).to eq(JSON.pretty_generate(return: [['main','silly']]))
     end
   end
 
