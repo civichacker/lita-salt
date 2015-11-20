@@ -118,7 +118,7 @@ module Lita
         if response.status == 200
           msg.reply(process_response(response))
         else
-          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
+          msg.reply(render_template("layout", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
@@ -131,7 +131,7 @@ module Lita
         if response.status == 200
           msg.reply process_response(response)
         else
-          msg.reply(render_template("example", response: "Failed to run command: #{body}\nError: #{response.body}"))
+          msg.reply(render_template("layout", response: "Failed to run command: #{body}\nError: #{response.body}"))
         end
       end
 
