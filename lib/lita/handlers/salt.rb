@@ -35,7 +35,7 @@ module Lita
 
 
       route /^#{abbreviate("salt")}\s(.+)\sevent\.(send|fire)\s(.+)$/i, :event, command: true, help: {
-        'salt minion event.(fire|send)' => 'Injects an event into the Salt even system'
+        'salt minion event.(fire|send)' => 'Injects an event into the Salt event system'
       }
 
       route /^#{abbreviate("salt")} up$/i, :manage_up, command: false, help: {
@@ -51,11 +51,11 @@ module Lita
       }
 
       route /^#{abbreviate("salt")}\s(.+)\sservice\.(restart|start|stop|status)\s(.+)$/i, :service, command: false, help: {
-        'salt minion service.(restart|start|stop)' => 'Performs defined action on service'
+        'salt minion service.(restart|start|stop|status)' => 'Performs defined action on service'
       }
 
       route /^#{abbreviate("salt")}\s(.+)\sschedule\.(run_job|enable_job|disable_job|list)(?:\s(.+))?$/i, :schedule, command: true, help: {
-        'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with schduling system'
+        'salt minion schedule.(run_job|enable_job|disable_job|list)' => 'Interacts with scheduling system'
       }
 
       route /^#{abbreviate("salt")}\s(.+)\ssupervisord\.(status|start|stop|restart|add|remove)\s(.+)$/i, :supervisord, command: false, help: {
