@@ -2,6 +2,7 @@ require 'json'
 require 'time'
 require 'lita/utils/payload'
 require 'lita/utils/decorate'
+require 'lita-confirmation'
 
 
 
