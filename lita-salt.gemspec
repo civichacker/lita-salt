@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "lita-salt"
-  spec.version       = "1.0.0"
+  spec.version       = "1.1.0"
   spec.authors       = ["Jurnell Cockhren"]
   spec.email         = ["jurnell@sophicware.com"]
   spec.description   = %q{Salt handler for lita 4+}
