@@ -37,13 +37,13 @@ end
 Commands are called in the with the `salt` prefix what can be optionally with the `s` abbreviation.
 
 ```shell
-lita: salt minion service.restart nginx
-@lita s minion schedule.run_job apt
+salt minion service.restart nginx
+s minion schedule.run_job apt
 ```
 
 ### Example
 
-`lita: salt up` executes the `manage.up` runner and returns a list of up minions.
+`salt up` executes the `manage.up` runner and returns a list of up minions.
 
 ## License
 
